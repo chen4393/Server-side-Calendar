@@ -1,0 +1,1 @@
+{"Wednesday":[{"event_name":"CSCI 4131","start_time":"13:00","end_time":"22:00","location":"KH4250"}],"Monday":[{"event_name":"CSCI 4131","start_time":"13:00","end_time":"22:00","location":"KH4250"}],"Friday":[{"event_name":"CSCI 4131","start_time":"13:00","end_time":"22:00","location":"KH4250"}]}
