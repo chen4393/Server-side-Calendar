@@ -9,6 +9,21 @@
 	<meta charset="utf-8">
 	<title>My Calendar</title>
 	<link rel="stylesheet" type="text/css" href="style.css" />
+	<script type="text/javascript"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOumeDq14JIAdEH5QtfvxlPEeu3v0LxEY">
+	</script>
+	<script>
+		var map;
+		var keller = new google.maps.LatLng(44.9745476,-93.23223189999999);
+		function initMap() {
+			map = new google.maps.Map(document.getElementById('map'), {
+				center: keller,
+				zoom: 17
+			});
+		}
+
+		google.maps.event.addDomListener(window, 'load', initMap);
+	</script>
 </head>
 <body>
 	<h1>My Calendar</h1>
@@ -77,11 +92,16 @@
 				}
 				echo "</table>";
 			} else {
-				echo "<div>Calendar has no events, use form to create events</div>";
+				echo "<br><div style='color:red'>Calendar has no events, use form to create events</div><br>";
 			}
 			
 		?>
 	</div>
+	<form id="loc_from">
+		<input type="text" id="location_box">
+		<button id="load_marks">Search</button>
+	</form>
+	<br>
 	<div id="map"></div>
 </body>
 </html>
