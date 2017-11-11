@@ -41,13 +41,13 @@
 					}
 					if (empty($_POST["starttime"]) ||
 						// Case sensative matching
-						!preg_match("/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/s", $_POST["starttime"], $match)) {
+						!preg_match("/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/s", $_POST["starttime"], $match)) {
 						$start_time_err = "Please select a valid value for Start Time. The format is HH:MM.";
 						echo '<span style="color:#FF0000;">' . $start_time_err . "<br></span>";
 					}
 					if (empty($_POST["endtime"]) ||
 						// Case sensative matching
-						!preg_match("/^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/s", $_POST["endtime"], $match)) {
+						!preg_match("/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/s", $_POST["endtime"], $match)) {
 						$end_time_err = "Please select a valid value for End Time. The format is HH:MM.";
 						echo '<span style="color:#FF0000;">' . $end_time_err . "<br></span>";
 					}
@@ -79,8 +79,30 @@
 						$new_event->location = $_POST["location"];
 
 						$events[$_POST["day"]][] = $new_event;
-
+						// array_push($events[$_POST["day"]][], $new_event)
+						// var_dump($new_event);
+// var_dump($events[$_POST["day"]]);
 						// Sort the events using usort()
+						function compare($e1, $e2) {
+							if (gettype($e1) == 'object') {
+								$s1 = $e1->start_time;
+							} else {
+								$s1 = $e1['start_time'];
+							}
+							if (gettype($e2) == 'object') {
+								$s2 = $e2->start_time;
+							} else {
+								$s2 = $e2['start_time'];
+							}
+							return strcmp($s1, $s2);
+						}
+						usort($events[$_POST["day"]], "compare");
+						// usort($events[$_POST["day"]], function ($a, $b) use ($order) {
+						//     $pos_a = array_search($a->start_time, $order);
+						//     $pos_b = array_search($b->start_time, $order);
+						//     return $pos_a - $pos_b;
+						// });
+						// var_dump($events[$_POST["day"]]);
 
 						$events = json_encode($events);
 						// $myfile = fopen("calendar.txt", "r+") or die("Unable to open file!");
@@ -88,7 +110,7 @@
 						fwrite($myfile, $events);
 						fclose($myfile);
 						// file_put_contents("calendar.txt", $events);
-						// header("Location: calendar.php");
+						header("Location: calendar.php");
 					}
 				}
 			}

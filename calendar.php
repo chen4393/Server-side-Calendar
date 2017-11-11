@@ -39,6 +39,18 @@
 				}
 
 				// Sort if not already sorted
+				// var_dump($events["Monday"]);
+				// echo "<br>";
+				function compare($e1, $e2) {
+							// echo "e1: ";
+							// var_dump($e1);
+							// echo "<br>";
+							// echo "e2: ";
+							// var_dump($e2);
+							// echo "<br>";
+							return strcmp($e1['start_time'], $e2['start_time']);
+						}
+						usort($events[$_POST["day"]], "compare");
 
 				$days = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
 				for ($i = 0; $i < 5; $i++) { 
