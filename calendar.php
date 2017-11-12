@@ -14,26 +14,35 @@
 	</script>
 	<script>
 		var map;
-		var keller = new google.maps.LatLng(44.9745476,-93.23223189999999);
+		var markers = [];
+		var uniqueLocations = [];
+		var keller = new google.maps.LatLng(44.9745476, -93.23223189999999);
 		function initMap() {
 			map = new google.maps.Map(document.getElementById('map'), {
 				center: keller,
-				zoom: 14
+				zoom: 16
 			});
 
 			service = new google.maps.places.PlacesService(map);
 
 			// Get addresses from calendar in HTML form
 			var locations = document.getElementsByClassName('loc');
-			// console.log(locations.length);
+			
+			// Deduplicate locations
 			for (var i = 0; i < locations.length; i++) {
-				// console.log(locations[i].innerHTML);
-				mark(locations[i].innerHTML);
+				if (uniqueLocations.indexOf(locations[i].innerHTML) == -1) {
+					uniqueLocations.push(locations[i].innerHTML);
+				}
+			}
+
+			for(var i = 0; i < uniqueLocations.length; i++) {
+				mark(uniqueLocations[i]);
 			}
 		}
 
 		google.maps.event.addDomListener(window, 'load', initMap);
 
+		/* ------------------------------------------ Add markers -----------------------------------------------*/
 		function mark(loc){
 			var request = {
 				location: keller,
@@ -44,7 +53,7 @@
 		}
 
 		function callback(results, status) {
-			if(status == google.maps.places.PlacesServiceStatus.OK) {
+			if (status == google.maps.places.PlacesServiceStatus.OK) {
 				/* just take top result */
 				var place = results[0];
 				createMarker(results[0]);
@@ -65,6 +74,22 @@
 			google.maps.event.addListener(marker, 'click', function() {
 				infowindow.open(map,marker);
 			});
+
+			markers.push(marker);
+		}
+		/* -------------------------------------------------------------------------------------------------------*/
+
+		/* ----------------------------------- Search nearby restaurants -----------------------------------------*/
+		// Sets the map on all markers in the array.
+		function setMapOnAll(map) {
+			for (var i = 0; i < markers.length; i++) {
+				markers[i].setMap(map);
+			}
+		}
+
+		// Removes the markers from the map, but keeps them in the array.
+		function clearMarkers() {
+			setMapOnAll(null);
 		}
 
 		function findRestaurants() {
@@ -78,7 +103,7 @@
 			var infowindow = new google.maps.InfoWindow();
 			var service = new google.maps.places.PlacesService(map);
 			service.nearbySearch({
-				location: {lat: 44.974, lng: -93.234},
+				location: keller,//{lat: 44.974, lng: -93.234},
 				radius: r,
 				type: ['restaurant']
 			}, callback2);
@@ -87,11 +112,19 @@
 
 		function callback2(results, status) {
 			if (status === google.maps.places.PlacesServiceStatus.OK) {
-				for (var i = 0; i < results.length; i++) {
-					createMarker(results[i]);
+				// Removes the markers from the map, but keeps them in the array.
+        			clearMarkers();
+				
+        			for (var i = 0; i < uniqueLocations.length; i++) {
+					mark(uniqueLocations[i]);
 				}
+
+                		for (var i = 0; i < results.length; i++) {
+					createMarker(results[i]);
+                		}
 			}
 		}
+		/* --------------------------------------------------------------------------------------------------------*/
 	</script>
 </head>
 <body>
@@ -126,15 +159,9 @@
 				// var_dump($events["Monday"]);
 				// echo "<br>";
 				function compare($e1, $e2) {
-							// echo "e1: ";
-							// var_dump($e1);
-							// echo "<br>";
-							// echo "e2: ";
-							// var_dump($e2);
-							// echo "<br>";
-							return strcmp($e1['start_time'], $e2['start_time']);
-						}
-						usort($events[$_POST["day"]], "compare");
+					return strcmp($e1['start_time'], $e2['start_time']);
+				}
+				usort($events[$_POST["day"]], "compare");
 
 				$days = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday");
 				for ($i = 0; $i < 5; $i++) { 
