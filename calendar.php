@@ -10,7 +10,7 @@
 	<title>My Calendar</title>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 	<script type="text/javascript"
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOumeDq14JIAdEH5QtfvxlPEeu3v0LxEY">
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOumeDq14JIAdEH5QtfvxlPEeu3v0LxEY&libraries=places">
 	</script>
 	<script>
 		var map;
@@ -20,9 +20,52 @@
 				center: keller,
 				zoom: 17
 			});
+
+			service = new google.maps.places.PlacesService(map);
+
+			// Get addresses from calendar in HTML form
+			var locations = document.getElementsByClassName('loc');
+			// console.log(locations.length);
+			for (var i = 0; i < locations.length; i++) {
+				// console.log(locations[i].innerHTML);
+				mark(locations[i].innerHTML);
+			}
 		}
 
 		google.maps.event.addDomListener(window, 'load', initMap);
+
+		function mark(loc){
+			var request = {
+				location: keller,
+				radius: '1000',
+				query:loc
+			};  
+			service.textSearch(request, callback);
+		}
+
+		function callback(results, status) {
+			if(status == google.maps.places.PlacesServiceStatus.OK) {
+			/* just take top result */
+			var place = results[0];
+			createMarker(results[0]);
+		}
+      }
+
+		function createMarker(place) {
+			var marker = new google.maps.Marker({
+				map: map,
+				position: place.geometry.location,
+				title: place.name
+			});
+
+			var infowindow = new google.maps.InfoWindow({
+				content: place.name
+			});
+
+			google.maps.event.addListener(marker, 'click', function() {
+				infowindow.open(map,marker);
+			});
+		}
 	</script>
 </head>
 <body>
@@ -86,7 +129,7 @@
 						echo " - <span class='loc'>";
 						echo $dayevent["location"];
 						echo "</span></td>";
-						echo "</td>";
+						echo "";
 					}
 					echo "</tr>";
 				}
@@ -103,5 +146,5 @@
 	</form>
 	<br>
 	<div id="map"></div>
-</body>
+	</body>
 </html>
