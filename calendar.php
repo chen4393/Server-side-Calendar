@@ -10,7 +10,7 @@
 	<title>My Calendar</title>
 	<link rel="stylesheet" type="text/css" href="style.css" />
 	<script type="text/javascript"
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCOumeDq14JIAdEH5QtfvxlPEeu3v0LxEY&libraries=places">
+		src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyA5AMUlNDROfbsLpzBP8Kc4lszf0fdw7YY">
 	</script>
 	<script>
 		var map;
@@ -65,6 +65,32 @@
 			google.maps.event.addListener(marker, 'click', function() {
 				infowindow.open(map,marker);
 			});
+		}
+
+		function findRestaurants() {
+			var r = document.forms['locForm']['radius'].value;
+			
+			if ((/^[0-9 ]+$/.test(r)) == false) {
+				alert("Radius must be numeric");
+				return false;
+			}
+			
+			var infowindow = new google.maps.InfoWindow();
+			var service = new google.maps.places.PlacesService(map);
+			service.nearbySearch({
+				location: {lat: 44.974, lng: -93.234},
+				radius: r,
+				type: ['restaurant']
+			}, callback2);
+			return false;
+		}
+
+		function callback2(results, status) {
+			if (status === google.maps.places.PlacesServiceStatus.OK) {
+				for (var i = 0; i < results.length; i++) {
+					createMarker(results[i]);
+				}
+			}
 		}
 	</script>
 </head>
@@ -140,9 +166,9 @@
 			
 		?>
 	</div>
-	<form id="loc_from">
-		<input type="text" id="location_box">
-		<button id="load_marks">Search</button>
+	<form name="locForm" onSubmit="return findRestaurants()">
+		<input type="text" name="radius">
+		<button name="loadMarks">Search nearby restaurants</button>
 	</form>
 	<br>
 	<div id="map"></div>
