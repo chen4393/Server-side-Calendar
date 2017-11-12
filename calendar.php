@@ -18,7 +18,7 @@
 		function initMap() {
 			map = new google.maps.Map(document.getElementById('map'), {
 				center: keller,
-				zoom: 17
+				zoom: 14
 			});
 
 			service = new google.maps.places.PlacesService(map);
@@ -45,11 +45,11 @@
 
 		function callback(results, status) {
 			if(status == google.maps.places.PlacesServiceStatus.OK) {
-			/* just take top result */
-			var place = results[0];
-			createMarker(results[0]);
-		}
-      }
+				/* just take top result */
+				var place = results[0];
+				createMarker(results[0]);
+			}
+      		}
 
 		function createMarker(place) {
 			var marker = new google.maps.Marker({
